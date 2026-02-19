@@ -1,0 +1,26 @@
+# Data & outputs
+0_datasets/
+data/
+**/output/
+**/outputs/
+**/__pycache__/
+*.pyc
+
+# Large images / archives
+*.zip
+*.rar
+*.7z
+
+# OS/IDE
+.DS_Store
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Optional: model weights (choose one)
+# models/
+# *.pt
+# *.onnx
+# *.tflite
