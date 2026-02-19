@@ -1,4 +1,21 @@
-![Example outputs of the segmentation pipeline](assets/ex.png)
+<img src="assets/ex.png" alt="Example outputs of the segmentation pipeline" width="500"/>
+
+*From top to bottom: original hand images, extracted nail + adjacent skin crops, and refined nail-only outputs.*
+
+# Nail Segmentation Pipeline (3 scripts)
+
+This repo contains a YOLOv8-based pipeline that produces (1) nail+skin crops, (2) per-nail contours and nail-only crops, and (3) refined nail-only outputs.
+
+## 1) `1_nail_skin_bb/boundingbox.py` — nail + adjacent skin crop
+**Logic:** run YOLO segmentation → resize masks → select nail(s) (most central or top-N by confidence) → largest contour → min-area rectangle → *(optional)* shift bottom edge down to include adjacent skin → polygon crop.
+
+**Outputs**
+- `1_nail_skin_bb/output/skin_crop/` polygon crops (`*_nail1...`)
+- `1_nail_skin_bb/output/txt/` 4 corner points + `angle=...`
+
+## 2) `2_nail_segmentation/1_segment.py` — masks, overlays, contours, nail-only crops
+**Logic:** ru
+
 
 *From top to bottom: original hand images, extracted nail + adjacent skin crops, and refined nail-only outputs.*
 
