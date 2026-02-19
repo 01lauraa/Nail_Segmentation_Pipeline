@@ -1,8 +1,6 @@
 <img src="assets/ex.png" alt="Example outputs of the segmentation pipeline" width="500"/>
 
-*From top to bottom: original hand images, extracted nail + adjacent skin crops, and refined nail-only outputs.*
-
-# Nail Segmentation Pipeline (3 scripts)
+# Nail Segmentation Pipeline 
 
 This repo contains a YOLOv8-based pipeline that produces (1) nail+skin crops, (2) per-nail contours and nail-only crops, and (3) refined nail-only outputs.
 
