@@ -10,7 +10,7 @@ This repository contains a set of Python pipelines for processing fingernail ima
 
 Below is an example of the pipeline output:
 
-![Example output](assets\output_example.png)
+![Example output](assets/output_example.png)
 
 
 ## Pipelines
