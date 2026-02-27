@@ -6,7 +6,8 @@ import numpy as np
 
 def combine_masks_binary(selected_masks: List[np.ndarray]) -> np.ndarray:
     """
-    Combine multiple binary masks into one (255 where any mask is positive).
+    Combine masks: to draw overlay if multiple nails in picture
+
     """
     if not selected_masks:
         raise ValueError("combine_masks_binary called with empty selected_masks")

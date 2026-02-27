@@ -20,14 +20,14 @@ from nail_pipeline.seg import (
     write_contours_txt,)
 
 MODEL_PATH = r"models\best.pt"
-INPUT_DIR = r"data\example"
-OUTPUT_DIR = r"outputs\segmentation"
+INPUT_DIR = r"0_old\0_datasets\example_sanquin\2"
+OUTPUT_DIR = r"outputs\segmentationS"
 
 CONF_THRESH = 0.15 # minnimum confidence for bounding box prediction
 IOU_THRESH = 0.60 # maximum amount of overlapping possible between two bounding boxes
 MIN_AREA = 50 # minnimum nail area for possible detection
 
-NUM_MASKS_TO_OUTPUT = 1  # number of boxes to output per image: 1  => choose most central valid nail, >1 => choose top-N by confidence 
+NUM_MASKS_TO_OUTPUT = 4  # number of boxes to output per image: 1  => choose most central valid nail, >1 => choose top-N by confidence 
 
 CONTOUR_MIN_AREA = 50
 CONTOUR_APPROX_EPSILON_RATIO = 0.002 # lower = more precise contour, larger file

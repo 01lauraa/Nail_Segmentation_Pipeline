@@ -12,24 +12,6 @@ Below is an example of the pipeline output:
 
 ![Example output](assets\output_example.png)
 
-## Repository structure
-
-repo/
-├── nail_pipeline/
-│   ├── **init**.py
-│   ├── common.py
-│   ├── obb.py
-│   ├── seg.py
-│   └── refine.py
-├── scripts/
-│   ├── **init**.py
-│   ├── run_oriented_bb.py
-│   ├── run_segmentation.py
-│   └── run_refine_segmentation.py
-├── models/
-│   └── best.pt
-└── data/
-└── example/
 
 ## Pipelines
 
@@ -42,11 +24,6 @@ Runs YOLO segmentation, selects the nail mask(s), converts each selected mask in
 * `.txt` files with box corner coordinates and angle
 * cropped nail + adjacent skin images
 
-Default output:
-
-* `1_nail_skin_bb/output/txt/`
-* `1_nail_skin_bb/output/skin_crop/`
-
 ### 2. Segmentation pipeline
 
 `scripts/run_segmentation.py`
@@ -56,12 +33,6 @@ Runs YOLO segmentation, selects the nail mask(s), and saves:
 * overlay images
 * contour `.txt` files
 * nail-only segmented crops
-
-Default output:
-
-* `2_nail_segmentation/output/segmentation/overlay/`
-* `2_nail_segmentation/output/segmentation/txt/`
-* `2_nail_segmentation/output/segmentation/nail_crop/`
 
 ### 3. Refinement pipeline
 
@@ -75,9 +46,6 @@ Takes the `nail_crop` output from the segmentation pipeline and refines it using
 4. cut top and bottom of the ellipse mask
 5. apply the refined mask
 
-Default output:
-
-* `2_nail_segmentation/output/refined_segmentation/`
 
 ## Installation
 
@@ -87,7 +55,7 @@ pip install ultralytics opencv-python numpy Pillow
 
 ## Model
 
-Place your trained model weights at:
+Model weights in:
 
 `models/best.pt`
 
@@ -103,21 +71,6 @@ Supported formats:
 * `.jpeg`
 * `.png`
 
-## Run
-
-From the repository root:
-
-### Oriented bounding boxes
-
-python -m scripts.run_oriented_bb
-
-### Segmentation outputs
-
-python -m scripts.run_segmentation
-
-### Refinement
-
-python -m scripts.run_refine_segmentation
 
 ## Selection logic
 
@@ -135,13 +88,4 @@ This is controlled by:
 
 * EXIF orientation is corrected before inference
 * masks are resized to match the original image before contour analysis
-* the refinement stage assumes black background outside the segmented nail crop
 
-## Suggested .gitignore entries
-
-**pycache**/
-*.pyc
-
-Optional:
-1_nail_skin_bb/output/
-2_nail_segmentation/output/

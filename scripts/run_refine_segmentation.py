@@ -4,8 +4,8 @@ sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 from nail_pipeline.refine import RefineConfig, refine_folder
 
 
-IMG_FOLDER = r"outputs\segmentation\nail_crop"
-OUT_FOLDER = r"outputs\refined_segmentation2"
+IMG_FOLDER = r"outputs\segmentationS\nail_crop"
+OUT_FOLDER = r"outputs\refined_segmentationS"
 
 cfg = RefineConfig(
     shrink_ratio=0.80,

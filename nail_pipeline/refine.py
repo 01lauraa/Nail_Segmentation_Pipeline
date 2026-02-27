@@ -1,17 +1,16 @@
 from __future__ import annotations
-
 import os
 from dataclasses import dataclass
 from typing import Optional, Tuple
-
 import cv2
 import numpy as np
 
 
 @dataclass
 class RefineConfig:
+
     """
-    Refine segmented nail crops using a single adaptive ellipse.
+    Refine segmented nail crops using an adaptive ellipse.
 
     Pipeline per image:
       1) infer foreground from non-black pixels
@@ -20,12 +19,8 @@ class RefineConfig:
       4) cut top and bottom of the ellipse mask
       5) apply final mask to the crop
 
-    Assumption:
-      input crops have black background outside the segmented nail.
     """
     shrink_ratio: float = 0.95
-
-    # Fractions of the FINAL fitted-shrunk ellipse mask height
     top_cut: float = 0.22
     bottom_cut: float = 0.06
 
@@ -102,7 +97,7 @@ def shrink_oval(
 ) -> Tuple[int, int, int, int, float]:
     """
     Shrink ellipse semi-axes by shrink_ratio.
-    Center and angle stay unchanged.
+
     """
     ax2 = max(1, int(round(ax * shrink_ratio)))
     ay2 = max(1, int(round(ay * shrink_ratio)))
@@ -118,7 +113,7 @@ def draw_oval_mask(
     angle: float,
 ) -> np.ndarray:
     """
-    Draw filled ellipse mask in {0,255}.
+    convert the ellipse parameters into a binary image mask {0,255}.
     """
     h, w = shape[:2]
     m = np.zeros((h, w), dtype=np.uint8)
@@ -129,8 +124,8 @@ def draw_oval_mask(
 def unified_cut_top_bottom(mask: np.ndarray, top_frac: float, bottom_frac: float) -> np.ndarray:
     """
     Find the occupied vertical span of the current mask and remove:
-      - top top_frac of that span
-      - bottom bottom_frac of that span
+      - top top_frac 
+      - bottom bottom_frac
     """
     out = mask.copy()
 
@@ -162,11 +157,9 @@ def refine_single_crop(
     cfg: RefineConfig,
 ) -> Tuple[np.ndarray, Optional[np.ndarray]]:
     """
-    Refine one segmented nail crop using a single adaptive ellipse.
-
     Returns:
       - refined_output_bgr
-      - final_mask_255 (or None if no foreground)
+      - final_mask_255 
     """
     fg = get_foreground_mask(img_bgr)
 
