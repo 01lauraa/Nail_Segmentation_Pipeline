@@ -89,3 +89,9 @@ This is controlled by:
 * EXIF orientation is corrected before inference
 * masks are resized to match the original image before contour analysis
 
+## References
+
+Images used as example come from:
+Coral, Miguel Ángel Valles, et al. "Non-invasive multimodal dataset for the detection of iron deficiency anemia in young adults: fingertip videos, palm videos, and nail photographs." Revista científica de sistemas e informática 5.2 (2025): 1.
+
+
