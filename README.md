@@ -1,43 +1,147 @@
-<img src="assets/ex.png" alt="Example outputs of the segmentation pipeline" width="500"/>
+# Nail Segmentation and Region Extraction Pipeline
 
-# Nail Segmentation Pipeline 
+This repository contains a set of Python pipelines for processing fingernail images with a YOLO segmentation model. It uses three main workflows:
 
-This repo contains a YOLOv8-based pipeline that produces (1) nail+skin crops, (2) per-nail contours and nail-only crops, and (3) refined nail-only outputs.
+1. **Oriented bounding box extraction** of the nail region plus adjacent skin
+2. **Segmentation export** of nail masks, contours, and nail-only crops
+3. **Refinement of segmented nail crops** using an ellipse-based postprocessing step
 
-## 1) `1_nail_skin_bb/boundingbox.py` — nail + adjacent skin crop
-**Logic:** run YOLO segmentation → resize masks → select nail(s) (most central or top-N by confidence) → largest contour → min-area rectangle → *(optional)* shift bottom edge down to include adjacent skin → polygon crop.
+## Example output
 
-**Outputs**
-- `1_nail_skin_bb/output/skin_crop/` polygon crops (`*_nail1...`)
-- `1_nail_skin_bb/output/txt/` 4 corner points + `angle=...`
+Below is an example of the pipeline output:
 
-## 2) `2_nail_segmentation/1_segment.py` — masks, overlays, contours, nail-only crops
-**Logic:** ru
+![Example output](assets\output_example.png)
 
+## Repository structure
 
-*From top to bottom: original hand images, extracted nail + adjacent skin crops, and refined nail-only outputs.*
+repo/
+├── nail_pipeline/
+│   ├── **init**.py
+│   ├── common.py
+│   ├── obb.py
+│   ├── seg.py
+│   └── refine.py
+├── scripts/
+│   ├── **init**.py
+│   ├── run_oriented_bb.py
+│   ├── run_segmentation.py
+│   └── run_refine_segmentation.py
+├── models/
+│   └── best.pt
+└── data/
+└── example/
 
-# Nail Segmentation Pipeline (3 scripts)
+## Pipelines
 
-This repo contains a YOLOv8-based pipeline that produces (1) nail+skin crops, (2) per-nail contours and nail-only crops, and (3) refined nail-only outputs.
+### 1. Oriented bounding box pipeline
 
-## 1) `1_nail_skin_bb/boundingbox.py` — nail + adjacent skin crop
-**Logic:** run YOLO segmentation → resize masks → select nail(s) (most central or top-N by confidence) → take largest contour → compute min-area rectangle → *(optional)* shift bottom edge down to include adjacent skin → polygon crop.
+`scripts/run_oriented_bb.py`
 
-**Outputs**
-- `1_nail_skin_bb/output/skin_crop/` polygon crops (`*_nail1...`)
-- `1_nail_skin_bb/output/txt/` 4 corner points + `angle=...`
+Runs YOLO segmentation, selects the nail mask(s), converts each selected mask into an oriented bounding box, optionally extends the box downward to include adjacent skin, and saves:
 
-## 2) `2_nail_segmentation/1_segment.py` — masks, overlays, contours, nail-only crops
-**Logic:** run YOLO segmentation → select nail mask(s) (most central or top-N) → save overlay for visualization → for each selected nail: export contour points to TXT + save tight nail-only crop (black background).
+* `.txt` files with box corner coordinates and angle
+* cropped nail + adjacent skin images
 
-**Outputs**
-- `2_nail_segmentation/output/segmentation/overlay/` overlays
-- `2_nail_segmentation/output/segmentation/txt/` per-nail contours (`*_nail1_mask.txt`)
-- `2_nail_segmentation/output/segmentation/nail_crop/` per-nail crops (`*_nail1_crop.png`)
+Default output:
 
-## 3) `2_nail_segmentation/2_refine_segmentation.py` — geometric refinement (circle vs ellipse)
-**Logic:** for each nail crop → build foreground mask from non-black pixels → fit **circle** and **ellipse** candidates → shrink shape → trim top/bottom → score each candidate *(kept_foreground − λ·leaked_background)* → keep best → apply mask.
+* `1_nail_skin_bb/output/txt/`
+* `1_nail_skin_bb/output/skin_crop/`
 
-**Outputs**
-- `2_nail_segmentation/output/refined_segmentation/` refined nail-only outputs
+### 2. Segmentation pipeline
+
+`scripts/run_segmentation.py`
+
+Runs YOLO segmentation, selects the nail mask(s), and saves:
+
+* overlay images
+* contour `.txt` files
+* nail-only segmented crops
+
+Default output:
+
+* `2_nail_segmentation/output/segmentation/overlay/`
+* `2_nail_segmentation/output/segmentation/txt/`
+* `2_nail_segmentation/output/segmentation/nail_crop/`
+
+### 3. Refinement pipeline
+
+`scripts/run_refine_segmentation.py`
+
+Takes the `nail_crop` output from the segmentation pipeline and refines it using an adaptive ellipse:
+
+1. infer foreground from non-black pixels
+2. fit ellipse to the segmented nail
+3. shrink the ellipse
+4. cut top and bottom of the ellipse mask
+5. apply the refined mask
+
+Default output:
+
+* `2_nail_segmentation/output/refined_segmentation/`
+
+## Installation
+
+Install dependencies:
+
+pip install ultralytics opencv-python numpy Pillow
+
+## Model
+
+Place your trained model weights at:
+
+`models/best.pt`
+
+## Input data
+
+By default, input images are read from:
+
+`data/example/`
+
+Supported formats:
+
+* `.jpg`
+* `.jpeg`
+* `.png`
+
+## Run
+
+From the repository root:
+
+### Oriented bounding boxes
+
+python -m scripts.run_oriented_bb
+
+### Segmentation outputs
+
+python -m scripts.run_segmentation
+
+### Refinement
+
+python -m scripts.run_refine_segmentation
+
+## Selection logic
+
+The OBB and segmentation pipelines support:
+
+* selecting the **single most central valid nail**
+* or selecting the **top-N masks by confidence**
+
+This is controlled by:
+
+* `NUM_BOXES_TO_OUTPUT` in `run_oriented_bb.py`
+* `NUM_MASKS_TO_OUTPUT` in `run_segmentation.py`
+
+## Notes
+
+* EXIF orientation is corrected before inference
+* masks are resized to match the original image before contour analysis
+* the refinement stage assumes black background outside the segmented nail crop
+
+## Suggested .gitignore entries
+
+**pycache**/
+*.pyc
+
+Optional:
+1_nail_skin_bb/output/
+2_nail_segmentation/output/

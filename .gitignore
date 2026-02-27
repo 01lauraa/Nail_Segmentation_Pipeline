@@ -1,10 +1,10 @@
 # Data & outputs
 0_datasets/
-data/
 **/output/
 **/outputs/
 **/__pycache__/
 *.pyc
+0_old
 
 # Large images / archives
 *.zip
@@ -19,8 +19,5 @@ data/
 # Logs
 *.log
 
-# Optional: model weights (choose one)
-# models/
-# *.pt
-# *.onnx
-# *.tflite
+pycache/
+*.pyc
