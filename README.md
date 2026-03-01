@@ -53,24 +53,6 @@ Install dependencies:
 
 pip install ultralytics opencv-python numpy Pillow
 
-## Model
-
-Model weights in:
-
-`models/best.pt`
-
-## Input data
-
-By default, input images are read from:
-
-`data/example/`
-
-Supported formats:
-
-* `.jpg`
-* `.jpeg`
-* `.png`
-
 
 ## Selection logic
 
